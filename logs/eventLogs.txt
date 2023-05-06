@@ -1,0 +1,20 @@
+03-29-2023 	 08:16:36 	 b00f914a-7a30-44cc-b93f-68fbbfd16849 	 undefined 
+03-29-2023 	 08:17:28 	 c91e6f90-d8e9-4ec2-9e1b-57585c35d855 	 Log Event Emitted 
+03-29-2023 	 09:52:22 	 d6baf7f0-fc9c-4a2c-b2c3-5adf1a143038 	 Log Event Emitted 
+03-29-2023 	 09:53:09 	 82126ce3-f43c-4828-a535-267ad3e44191 	 Log Event Emitted 
+04-05-2023 	 10:07:41 	 2ac4372f-835b-4a26-ba60-e19cb0ac9d35 	 GET	undefined	/index 
+04-05-2023 	 10:07:41 	 5520a3f1-94d6-4abe-8c82-e4706d661caf 	 GET	undefined	/css/style.css 
+04-05-2023 	 10:07:41 	 5edffeeb-77dc-4cde-a9eb-2627f7b1b029 	 GET	undefined	/favicon.ico 
+04-05-2023 	 10:09:53 	 90efefa8-0157-4539-a4cc-562d1285613b 	 GET	undefined	/index 
+04-05-2023 	 10:09:53 	 e091d139-5195-4cda-905a-60ad2484bd27 	 GET	undefined	/css/style.css 
+04-05-2023 	 10:09:53 	 8b41edc6-de03-4722-ba41-3a7b9f3e7258 	 GET	undefined	/favicon.ico 
+04-05-2023 	 10:11:07 	 9922115c-e10f-4cce-86a4-e1d963bd4065 	 OPTIONS	https://www.google.com	/ 
+04-05-2023 	 10:11:07 	 ab163d9a-2d3b-40c7-abc1-84eea0017b78 	 GET	https://www.google.com	/ 
+
+A CORS error occurs when a web page makes a request to a different domain than the one 
+that served the web page1. Cross-Origin Resource Sharing (CORS) is a standard that allows
+a server to relax the same-origin policy1. This is used to explicitly allow some cross-origin 
+requests while rejecting others1. For example, if a site offers an embeddable service, 
+it may be necessary to relax certain restrictions1.
+ 
+

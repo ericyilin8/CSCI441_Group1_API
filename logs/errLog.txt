@@ -1,0 +1,2 @@
+04-05-2023 	 10:57:10 	 7bcf96b7-51b4-4a45-b274-753ade4f26df 	 Error Not allowed by CORS 
+04-05-2023 	 10:57:11 	 d9dd1290-e7ab-4f8e-b7c5-6a258ed05844 	 Error Not allowed by CORS 
