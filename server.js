@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // connect DB
 connectDB();
-// Custom Middleware Logger
+
 app.use(logger);
 // CORS
 app.use(cors(corsOptions));
@@ -28,8 +28,8 @@ app.use("/subdir", express.static(path.join(__dirname, "/public")));
 // Routes
 app.use("/", require("./routes/root"));
 app.use("/subdir", require("./routes/subdir"));
-// API Route
-app.use("/employees", require("./routes/api/employees"));
+// API Routes
+app.use("/states", require("./routes/api/states"));
 
 // 404 Route for un-defined
 app.all("*", (req, res) => {
