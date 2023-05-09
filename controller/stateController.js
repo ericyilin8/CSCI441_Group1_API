@@ -13,12 +13,10 @@ const getAllStates = async (req, res) => {
   const states = await States.find().exec();
 
   data.states.forEach((state)=>{
-    if( req.query.contig !== undefined
-        && req.query.contig === 'true' 
+    if( req.query.contig === 'true' 
         && (state.code == 'AK' || state.code == 'HI'))
       return;
-    if( req.query.contig !== undefined
-        && req.query.contig === 'false' 
+    if( req.query.contig === 'false' 
         && !(state.code == 'AK' || state.code == 'HI'))
       return;
     
@@ -30,66 +28,80 @@ const getAllStates = async (req, res) => {
   res.json(output);
 };
 
-// Create an State
-const createNewState = (req, res) => {
-  const newState = {
-    id: data.states?.length
-      ? data.states[data.states.length - 1].id + 1
-      : 1,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-  };
+const addFacts = async (req, res) => {
 
-  if (!newState.firstName || !newState.lastName) {
-    return res
-      .status(400)
-      .json({ message: "First and last names are required." });
+  const state = await States.findOne({stateCode:req.params.id}).exec();
+
+  if(state)
+  {
+    state.funfacts = [...state.funfacts, ...req.body.funfacts];
+    res.json(await state.save())
+  }
+  else
+  {
+    const newState = new States({
+      stateCode: req.params.id,
+      funfacts: req.body.funfacts
+    });
+    
+    res.json(await newState.save())
   }
 
-  data.setStates([...data.states, newState]);
-  res.status(201).json(data.states);
+
 };
 
 // Update an State
-const updateState = (req, res) => {
-  const state = data.states.find(
-    (emp) => emp.code === req.body.id
-  );
-  if (!state) {
-    return res
+const updateFact = async (req, res) => {
+
+  const state = await States.findOne({stateCode:req.params.id}).exec();
+
+  if(state)
+  {
+    try
+    {
+      state.funfacts[req.body.index-1] = req.body.funfact;
+      res.json( await state.save() );
+    }
+    catch(err)
+    {
+      res
       .status(400)
-      .json({ message: `State ${req.body.id} is not found` });
+      .json( { message : err } )
+    }
+  }
+  else
+  {
+    res
+    .status(400)
+    .json({ message: `State ID ${req.body.id} not found` });
   }
 
-  if (req.body.firstName) state.firstName = req.body.firstName;
-  if (req.body.lastName) state.lastName = req.body.lastName;
-
-  const filteredArray = data.states.filter(
-    (emp) => emp.code !== req.body.id
-  ); // Exclude the state to be updated from filtered array
-  const unsortedArray = [...filteredArray, state];
-  data.setStates(
-    unsortedArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
-  );
-
-  res.json(data.states);
 };
 
 // Delete an State
-const deleteState = (req, res) => {
-  const state = data.states.find(
-    (emp) => emp.code === req.body.id
-  );
-  if (!state) {
-    return res
+const deleteFact = async (req, res) => {
+  const state = await States.findOne({stateCode:req.params.id}).exec();
+
+  if(state)
+  {
+    try
+    {
+      state.funfacts.splice(req.body.index-1, 1);
+      res.json( await state.save() );
+    }
+    catch(err)
+    {
+      res
       .status(400)
-      .json({ message: `State ID ${req.body.id} not found` });
+      .json( { message : err } )
+    }
   }
-  const filteredArray = data.states.filter(
-    (emp) => emp.code !== req.body.id
-  );
-  data.setStates([...filteredArray]);
-  res.json(data.states);
+  else
+  {
+    res
+    .status(400)
+    .json({ message: `State ID ${req.body.id} not found` });
+  }
 };
 
 // Get a State
@@ -103,13 +115,9 @@ const getState = async (req, res) => {
       .json({ message: `State ${stateId} is not found` });
   }
   const state2 = await States.findOne({stateCode: stateId}).exec();
-  console.log(state2)
-  res.json(
-    {
-      ...state,
-      funfacts: state2.funfacts
-    }
-  );
+
+  if(state2) state.funfacts = state2.funfacts
+  res.json(state);
 };
 
 //#region Get State Information
@@ -201,9 +209,9 @@ const getStateFunFact = async (req, res) => {
 
 module.exports = {
   getAllStates,
-  updateState,
-  createNewState,
-  deleteState,
+  updateFact,
+  addFacts,
+  deleteFact,
   getState,
   getStateAdmission,
   getStateCapital,

@@ -5,9 +5,6 @@ const stateController = require("../../controller/stateController");
 router
   .route("/")
     .get(stateController.getAllStates)
-    .post(stateController.createNewState)
-    .put(stateController.updateState)
-    .delete(stateController.deleteState);
 
 router
   .route("/:id")
@@ -27,6 +24,9 @@ router
 router
   .route("/:id/funfact")
   .get(stateController.getStateFunFact)
+  .post(stateController.addFacts)
+  .patch(stateController.updateFact)
+  .delete(stateController.deleteFact)
 
 
 module.exports = router;
