@@ -23,7 +23,11 @@ app.all("*", (req, res) => {
   res.type("txt").send("404 Not Found");
 });
 
-io.on('connection', () => { console.log("client connected") });
+io.on('connection', socket => {
+  socket.emit('connected', {}/* … */); // emit an event to the socket
+  //io.emit('broadcast', /* … */); // emit an event to all connected sockets
+  //socket.on('reply', () => { /* … */ }); // listen to the event
+});
 
 const PORT = process.env.PORT || 3000;
 
