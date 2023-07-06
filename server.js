@@ -23,12 +23,21 @@ app.all("*", (req, res) => {
   res.type("txt").send("404 Not Found");
 });
 
+const messages = []
+
 io.on('connection', socket => {
-  socket.emit('connected', {}/* … */); // emit an event to the socket
   //io.emit('broadcast', /* … */); // emit an event to all connected sockets
   //socket.on('reply', () => { /* … */ }); // listen to the event
+  socket.on('newMessage', (newMsg) => {
+    messages.unshift(newMsg[0])
+    io.emit('UpdateMessages', messages)
+  })
+
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT);
+console.log("server listening")
