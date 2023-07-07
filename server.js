@@ -28,6 +28,9 @@ const messages = []
 io.on('connection', socket => {
   //io.emit('broadcast', /* … */); // emit an event to all connected sockets
   //socket.on('reply', () => { /* … */ }); // listen to the event
+  
+  socket.emit('UpdateMessages', messages)
+
   socket.on('newMessage', (newMsg) => {
     messages.unshift(newMsg[0])
     io.emit('UpdateMessages', messages)
