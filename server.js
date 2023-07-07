@@ -14,6 +14,14 @@ const messages = []
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// Set up CORS headers
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 // built in middleware to handle urlencoded data
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
