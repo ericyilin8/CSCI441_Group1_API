@@ -56,7 +56,7 @@ app.post('/image',  upload.single('image'), (req, res) => {
           name: 'Lucy Jean',
           avatar: 'https://cdn.stocksnap.io/img-thumbs/960w/camera-girl_WJL4RY6N6Z.jpg',
         },
-        image: process.env.DIRECTORY + imageName, //don't use path.join here
+        image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
         // Mark the message as sent, using one tick
         sent: true,
         // Mark the message as received, using two tick
