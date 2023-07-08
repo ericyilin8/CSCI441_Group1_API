@@ -6,6 +6,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
 const multer = require('multer')
+const handleSocketEvents = require('./utils/socketHandlers');
 
 //Real-time data
 const messages = []
@@ -55,7 +56,7 @@ app.post('/image',  upload.single('image'), (req, res) => {
           name: 'Lucy Jean',
           avatar: 'https://cdn.stocksnap.io/img-thumbs/960w/camera-girl_WJL4RY6N6Z.jpg',
         },
-        image: 'https://adventurous-pointed-ocean.glitch.me/' + imageName, //don't use path.join here
+        image: DIRECTORY + imageName, //don't use path.join here
         // Mark the message as sent, using one tick
         sent: true,
         // Mark the message as received, using two tick
@@ -68,25 +69,7 @@ app.post('/image',  upload.single('image'), (req, res) => {
   });
 });
 
-
-
-let i = 0;
-//test comment
-io.on('connection', socket => {
-  //io.emit('broadcast', /* … */); // emit an event to all connected sockets
-  //socket.on('reply', () => { /* … */ }); // listen to the event
-  console.log('connected!', i++)
-
-  socket.emit('UpdateMessages', messages)
-
-  socket.on('newMessage', (newMsg) => {
-    messages.unshift(newMsg[0])
-    io.emit('UpdateMessages', messages)
-  })
-
-});
-
-
+handleSocketEvents(io);
 
 const PORT = process.env.PORT || 3000;
 
