@@ -6,8 +6,9 @@ module.exports = function handleSocketEvents(io) {
   let messages = [];
   
   io.on('connection', async (socket) => {
-    console.log('New connection: ', socket.id);
-    console.log('Connection number: ', i);
+    socket.on('connect', () => {
+      console.log(socket.id, 'connected to server.');
+    });
 
     // Create a new user for the new connection
     // Right now just assign username based on socket.id, tiny chance of duplicates though
@@ -26,11 +27,13 @@ module.exports = function handleSocketEvents(io) {
     // Listen for shareLocation event
     socket.on('shareLocation', (location) => {
       // update the location for this user in the sharedLocation object
-      sharedLocations[newUser.id] = location;
+      sharedLocations[newUser.id] = {
+        location: location,
+        username: newUser.username
+      };
 
       // send the location change to other users
       io.emit('updateLocations', sharedLocations);
-      console.log('Sharing location for: ', newUser.username);
       console.log('Locations object: ', sharedLocations);
     });
 
