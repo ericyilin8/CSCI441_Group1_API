@@ -15,6 +15,9 @@ const state =
   messages: []
 }
 
+let sharedLocations = state.sharedLocations;
+let messages = state.messages;
+
 // Configure multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
