@@ -1,9 +1,9 @@
 const User = require('../model/user')
 
-module.exports = function handleSocketEvents(io) {
+module.exports = function handleSocketEvents(io, state) {
   let i = 0;
-  let sharedLocations = {};
-  let messages = [];
+  let sharedLocations = state.sharedLocations; //type {}
+  let messages = state.messages; //type []
   
   io.on('connection', async (socket) => {
     socket.on('connect', () => {

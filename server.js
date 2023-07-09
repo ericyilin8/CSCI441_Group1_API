@@ -9,7 +9,11 @@ const multer = require('multer')
 const handleSocketEvents = require('./utils/socketHandlers');
 
 //Real-time data
-const messages = []
+const state = 
+{
+  sharedLocations: {},
+  messages: []
+}
 
 // Configure multer
 const storage = multer.memoryStorage();
@@ -69,7 +73,7 @@ app.post('/image',  upload.single('image'), (req, res) => {
   });
 });
 
-handleSocketEvents(io);
+handleSocketEvents(io, state);
 
 const PORT = process.env.PORT || 3000;
 
