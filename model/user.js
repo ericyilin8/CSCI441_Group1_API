@@ -1,41 +1,27 @@
-class User {
-  constructor(id, username) {
-    this.id = id;
-    this.username = username;
-  }
+const mongoose = require('mongoose');
 
-  // User storage
-  static users = [];
+const userSchema = new mongoose.Schema({
+  //we use mongo's default _id, so no _id is here
+  username: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  phone_number: {
+    type: String,
+    required: true,
+  },
+  profile_picture: String, //image uri
+  user_status: String,
+});
 
-  // Fetch user by ID
-  static findById(id) {
-    return this.users.find(user => user.id === id);
-  }
-
-  // Create new user
-  static create(data) {
-    const id = this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1;
-    const user = new User(id, data.username);
-    this.users.push(user);
-    return user;
-  }
-
-  // Update existing user
-  static update(id, data) {
-    const user = this.findById(id);
-    if (user) {
-      Object.assign(user, data);
-      return user;
-    }
-  }
-
-  // Delete user
-  static delete(id) {
-    const userIndex = this.users.findIndex(user => user.id === id);
-    if (userIndex > -1) {
-      this.users.splice(userIndex, 1);
-    }
-  }
-}
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
