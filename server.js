@@ -8,6 +8,11 @@ const fs = require('fs');
 const multer = require('multer')
 const handleSocketEvents = require('./utils/socketHandlers');
 
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb+srv://root:group1@cluster0.qtwur9i.mongodb.net/?retryWrites=true&w=majority')
+  .then(() => console.log('Connected!'));
+
 //Real-time data
 const state = 
 {
