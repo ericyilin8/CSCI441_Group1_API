@@ -18,8 +18,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  profile_picture: String, //image uri
-  user_status: String,
+  avatar: String, //image uri
+  status: String,
+  groups: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+  }]
 });
 
 const User = mongoose.model('User', userSchema);
