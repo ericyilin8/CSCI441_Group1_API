@@ -10,7 +10,7 @@ const handleSocketEvents = require('./utils/socketHandlers');
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://root:group1@cluster0.qtwur9i.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect(process.env.mongodb_uri)
   .then(() => console.log('Connected!'));
 
 //Real-time data
