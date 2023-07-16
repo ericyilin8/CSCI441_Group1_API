@@ -1,8 +1,16 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  //we use mongo's default _id, so no _id is here
-  username: {
+  userName : {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
     type: String,
     required: true,
   },
