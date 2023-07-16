@@ -17,7 +17,7 @@ const messageController = require('./controller/MessageController');
 const groupController = require('./controller/GroupController');
 
 mongoose.connect(process.env.mongodb_uri)
-  .then(() => console.log('Connected!'));
+  .then(() => console.log('MongoDB Connected!'));
 
 //Real-time data
 const state = 

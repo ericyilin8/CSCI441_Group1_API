@@ -28,6 +28,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/users - Create a new user
 router.post('/', async (req, res) => {
   try {
+    console.log(`Received registration request for user: ${req.body.username}`);
     const user = new User(req.body);
     await user.save();
     res.status(201).json(user);

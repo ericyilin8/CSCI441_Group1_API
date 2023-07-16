@@ -10,10 +10,14 @@ module.exports = function handleSocketEvents(io, state) {
       console.log(socket.id, 'connected to server.');
     });
 
-    // Create a new user for the new connection
-    // Right now just assign username based on socket.id, tiny chance of duplicates though
-    const newUser = await User.create({ username: `User_${socket.id.slice(-3)}`, id: socket.id });
-    console.log('Create new user: ', newUser.username);
+    // this will be scrapped once user authentication is implemented
+    const newUser = await User.create({ 
+      username: `User_${socket.id.slice(-3)}`, 
+      id: socket.id,
+      email: `${socket.id}@example.com`,
+      password: 'defaultPassword',
+      phone_number: '0000000000',
+    });
 
     // Send connected device current messages array
     socket.emit('UpdateMessages', messages);
@@ -42,7 +46,7 @@ module.exports = function handleSocketEvents(io, state) {
       console.log('User disconnected:', socket.id);
       // When the user disconnects, delete their location data
       delete sharedLocations[newUser.id];
-      await User.delete(newUser.id);
+      await User.findByIdAndDelete(newUser.id);
     });
   });
 }
