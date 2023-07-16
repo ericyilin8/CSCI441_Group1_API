@@ -43,7 +43,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
-app.use('/api/users', userController);
+app.use('/api/user', userController);
 app.use('/api/message', messageController); 
 app.use('/api/group', groupController); 
 

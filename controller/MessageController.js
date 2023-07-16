@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Message = require('../models/message');
+const Message = require('../model/message');
 
 const fs = require('fs');
 const multer = require('multer')
