@@ -12,8 +12,9 @@ const mongoose = require('mongoose');
 const handleSocketEvents = require('./utils/socketHandlers');
 
 //Controllers
-const userController = require('./controllers/UserController');
-const messageController = require('./controllers/MessageController');
+const userController = require('./controller/UserController');
+const messageController = require('./controller/MessageController');
+const groupController = require('./controller/GroupController');
 
 mongoose.connect(process.env.mongodb_uri)
   .then(() => console.log('Connected!'));
@@ -42,8 +43,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
-app.use('/api/users', userController); //User related routes
-app.use('/api/message', messageController); //User related routes
+app.use('/api/users', userController);
+app.use('/api/message', messageController); 
+app.use('/api/group', groupController); 
 
 handleSocketEvents(io, state);
 
