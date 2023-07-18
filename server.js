@@ -8,7 +8,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const secretKey = 'your_secret_key'; // Replace with your actual secret key
+const secretKey = process.env.jwt_secret_key;
 
 const routes_that_bypass_JWT = [ '/api/users/login' , '/api/users/register']
 
