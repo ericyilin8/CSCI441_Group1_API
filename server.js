@@ -7,6 +7,32 @@ const path = require("path");
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const secretKey = 'your_secret_key'; // Replace with your actual secret key
+
+const routes_that_bypass_JWT = [ '/api/users/login' , '/api/users/register']
+
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided.' });
+  }
+
+  // Skip JWT verification for routes like login and register
+  if (routes_that_bypass_JWT.includes(req.path)) {
+    return next();
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Failed to authenticate token.' });
+    }
+
+    req.jwt_payload = decoded; // Store the decoded user data in the request object
+    next();
+  });
+}
 
 //Utils
 const handleSocketEvents = require('./utils/socketHandlers');
@@ -29,18 +55,15 @@ const state =
 let sharedLocations = state.sharedLocations;
 let messages = state.messages;
 
-// Set up CORS headers, allow cross origin ? not sure if needed
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+
 
 // built in middleware to handle urlencoded data
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// other middleware
+app.use(verifyToken);
 
 // API Routes
 app.use('/api/user', userController);

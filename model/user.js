@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  avatar: String, //image uri
+  avatar: {
+    type: String, //image uri
+    default: '',
+  },
   status: String,
   groups: [{
     type: mongoose.Schema.Types.ObjectId,
