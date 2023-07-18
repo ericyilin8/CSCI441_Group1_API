@@ -15,13 +15,13 @@ const routes_that_bypass_JWT = [ '/api/users/login' , '/api/users/register']
 function verifyToken(req, res, next) {
   const token = req.headers.authorization;
 
+    // Skip JWT verification for routes like login and register
+    if (routes_that_bypass_JWT.includes(req.path)) {
+      return next();
+    }
+
   if (!token) {
     return res.status(401).json({ message: 'No token provided.' });
-  }
-
-  // Skip JWT verification for routes like login and register
-  if (routes_that_bypass_JWT.includes(req.path)) {
-    return next();
   }
 
   jwt.verify(token, secretKey, (err, decoded) => {
