@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
     console.log(`Received registration request for user: ${req.body.username}`);
     
     // hash password using authService
-    const hashedPassword = await authService.hashedPassword(password);
+    const hashedPassword = await authService.hashPassword(password);
     
     // use hashed password when creating the user
     const user = new User({ username, password: hashedPassword, email, phone_number});
