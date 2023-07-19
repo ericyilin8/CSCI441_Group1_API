@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.jwt_secret_key;
 
-const routes_that_bypass_JWT = [ '/api/users/login' , '/api/users/register']
+const routes_that_bypass_JWT = [ '/api/user/login' , '/api/user/register']
 
 function verifyToken(req, res, next) {
   const token = req.headers.authorization;

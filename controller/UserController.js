@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../model/user');
 
-// POST /api/users - Create a new user
+// POST /api/user - Create a new user
 router.post('/register', async (req, res) => {
   try {
     console.log(`Received registration request for user: ${req.body.username}`);
@@ -14,7 +14,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/users/login - Login
+// POST /api/user/login - Login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// PUT /api/users/:id - Update a user by ID
+// PUT /api/user/:id - Update a user by ID
 router.put('/:id', async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -47,7 +47,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/users/:id - Delete a user by ID
+// DELETE /api/user/:id - Delete a user by ID
 router.delete('/:id', async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
