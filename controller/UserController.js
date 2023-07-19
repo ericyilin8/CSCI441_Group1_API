@@ -6,15 +6,22 @@ const jwt = require('jsonwebtoken');
 // POST /api/user - Create a new user
 router.post('/register', async (req, res) => {
   try {
+    const { username, password, email, phone_number } = req.body;
+
     console.log(`Received registration request for user: ${req.body.username}`);
-    const user = new User(req.body);
+    
+    // hash password using authService
+    const hashedPassword = await authService.hashedPassword(password);
+    
+    // use hashed password when creating the user
+    const user = new User({ username, password: hashedPassword, email, phone_number});
     await user.save();
-    res.status(201).json(user);
+
+    res.status(201).json({ message: 'User created', user: { id: user._id, username: user.username }});
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
-
 // POST /api/user/login - Login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -24,6 +31,17 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // use authService to compare passwords
+    const isPasswordMatch = await authService.comparePassword(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(400).json({ error: 'Incorrect password' });
+    }
+
+    // User is authenticated
+    res.json({ message: 'User authenticated', user: { id: user._id, username: user.username }});
+
     const secretKey = process.env.jwt_secret_key;
     const payload = {};
     const token = jwt.sign(payload, secretKey, { expiresIn: '24h' }); //expiration
