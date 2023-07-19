@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await authService.hashPassword(password);
     
     // use hashed password when creating the user
-    const user = new User({ username, password: hashedPassword, email, phone_number});
+    const user = new User({ username, password: hashedPassword, email, phone_number, firstName, lastName, phoneNumber });
     await user.save();
 
     res.status(201).json({ message: 'User created', user: { id: user._id, username: user.username }});
