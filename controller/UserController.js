@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
     //Find the user
-    const user = await User.findOne({username, password});
+    const user = await User.findOne({username});
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -39,14 +39,12 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Incorrect password' });
     }
 
-    // User is authenticated
-    res.json({ message: 'User authenticated', user: { id: user._id, username: user.username }});
-
     const secretKey = process.env.jwt_secret_key;
     const payload = {};
     const token = jwt.sign(payload, secretKey, { expiresIn: '24h' }); //expiration
     delete user.password;
 
+    // User is authenticated
     res.status(201).json( { user, token });
   } catch (err) {
     res.status(400).json({ error: err.message });
