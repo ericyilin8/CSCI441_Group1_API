@@ -8,6 +8,7 @@
   },
   "author": "CSCI_441_Group1",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "bcrypt": "^5.1.0",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",

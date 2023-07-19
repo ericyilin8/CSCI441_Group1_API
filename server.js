@@ -39,8 +39,15 @@ function verifyToken(req, res, next) {
   });
 }
 
+//Real-time data
+const state = 
+{
+  sharedLocations: {},
+  messages: []
+}
+
 //Utils
-const handleSocketEvents = require('./utils/socketHandlers');
+const socketHandler = require('./utils/socketHandlers');
 
 //Controllers
 const userController = require('./controller/UserController');
@@ -49,13 +56,6 @@ const groupController = require('./controller/GroupController');
 
 mongoose.connect(process.env.mongodb_uri)
   .then(() => console.log('MongoDB Connected!'));
-
-//Real-time data
-const state = 
-{
-  sharedLocations: {},
-  messages: []
-}
 
 let sharedLocations = state.sharedLocations;
 let messages = state.messages;
@@ -75,7 +75,7 @@ app.use('/api/user', userController);
 app.use('/api/message', messageController); 
 app.use('/api/group', groupController); 
 
-handleSocketEvents(io, state);
+socketHandler(io, state);
 
 //upload image
 app.post('/image',  upload.single('image'), (req, res) => {
@@ -119,5 +119,4 @@ app.post('/image',  upload.single('image'), (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT);
-console.log("server listening")
+server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

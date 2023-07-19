@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../model/user');
 const jwt = require('jsonwebtoken');
+const authService = require('../utils/authService');
 
 const authService = require('../utils/authService');
 
@@ -24,6 +25,7 @@ router.post('/register', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
 // POST /api/user/login - Login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -42,7 +44,7 @@ router.post('/login', async (req, res) => {
     }
 
     const secretKey = process.env.jwt_secret_key;
-    const payload = {};
+    const payload = { username: user.username };
     const token = jwt.sign(payload, secretKey, { expiresIn: '24h' }); //expiration
     delete user.password;
 
