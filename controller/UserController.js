@@ -8,7 +8,7 @@ const authService = require('../utils/authService');
 // POST /api/user - Create a new user
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, email, phone_number } = req.body;
+    const { username, password, email, phone_number, firstName, lastName, phoneNumber } = req.body;
 
     console.log(`Received registration request for user: ${req.body.username}`);
     
