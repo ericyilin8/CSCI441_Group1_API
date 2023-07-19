@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Group = require('../model/group');
 
-// GET /api/groups - Get all groups
+// GET /api/group - Get all groups
 router.get('/', async (req, res) => {
   try {
     const groups = await Group.find();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/groups/:id - Get a group by ID
+// GET /api/group/:id - Get a group by ID
 router.get('/:id', async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
@@ -25,7 +25,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/groups - Create a new group
+// POST /api/group - Create a new group
 router.post('/', async (req, res) => {
   try {
     const group = new Group(req.body);
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/groups/:id - Update a group by ID
+// PUT /api/group/:id - Update a group by ID
 router.put('/:id', async (req, res) => {
   try {
     const group = await Group.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/groups/:id - Delete a group by ID
+// DELETE /api/group/:id - Delete a group by ID
 router.delete('/:id', async (req, res) => {
   try {
     const group = await Group.findByIdAndDelete(req.params.id);
