@@ -1,52 +1,57 @@
-const User = require('../model/user')
+const jwt = require('jsonwebtoken');
 
-module.exports = function handleSocketEvents(io, state) {
-  let i = 0;
-  let sharedLocations = state.sharedLocations; //type {}
-  let messages = state.messages; //type []
-  
-  io.on('connection', async (socket) => {
+module.exports = function(io, state) {
+  let sharedLocations = state.sharedLocations;
+  let messages = state.messages;
+
+  io.use((socket, next) => {
+    if (socket.handshake.query && socket.handshake.query.token){
+      jwt.verify(socket.handshake.query.token, process.env.jwt_secret_key, function(err, decoded) {
+        if (err) return next(new Error('Authentication error'));
+        socket.decoded = decoded;
+        next();
+      });
+    }
+    else {
+      next(new Error('Authentication error'));
+    }
+  }).on('connection', async (socket) => {
+    
     socket.on('connect', () => {
       console.log(socket.id, 'connected to server.');
     });
 
-    // this will be scrapped once user authentication is implemented
-    const newUser = await User.create({ 
-      username: `User_${socket.id.slice(-3)}`, 
-      id: socket.id,
-      email: `${socket.id}@example.com`,
-      password: 'defaultPassword',
-      phone_number: '0000000000',
-    });
-
-    // Send connected device current messages array
     socket.emit('UpdateMessages', messages);
       
-    // Listen for newMessage event
     socket.on('newMessage', (newMsg) => {
-      messages.unshift(newMsg[0]);
+      const message = {
+        _id: newMsg[0]._id,
+        text: newMsg[0].text,
+        createdAt: new Date(),
+        user: {
+          _id: socket.decoded.id,
+          name: socket.decoded.username,
+          avatar: 'https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg',
+        },
+      };
+
+      messages.unshift(message);
       io.emit('UpdateMessages', messages);
     });
 
-    // Listen for shareLocation event
     socket.on('shareLocation', (location) => {
-      // update the location for this user in the sharedLocation object
-      sharedLocations[newUser.id] = {
+      sharedLocations[socket.decoded.id] = {
         location: location,
-        username: newUser.username
+        username: socket.decoded.username
       };
 
-      // send the location change to other users
       io.emit('updateLocations', sharedLocations);
       console.log('Locations object: ', sharedLocations);
     });
 
-    // Log user disconnected
     socket.on('disconnect', async () => {
       console.log('User disconnected:', socket.id);
-      // When the user disconnects, delete their location data
-      delete sharedLocations[newUser.id];
-      await User.findByIdAndDelete(newUser.id);
+      delete sharedLocations[socket.decoded.id];
     });
   });
-}
+};
