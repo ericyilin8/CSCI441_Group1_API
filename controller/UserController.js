@@ -42,7 +42,10 @@ router.post('/login', async (req, res) => {
     }
 
     const secretKey = process.env.jwt_secret_key;
-    const payload = { username: user.username };
+    const payload = {
+      id: user._id,
+      username: user.username 
+    };
     const token = jwt.sign(payload, secretKey, { expiresIn: '24h' }); //expiration
     delete user.password;
 
