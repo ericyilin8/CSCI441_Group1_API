@@ -46,7 +46,15 @@ const state =
   messages: []
 }
 
+//Real-time data
+const state = 
+{
+  sharedLocations: {},
+  messages: []
+}
+
 //Utils
+const socketHandler = require('./utils/socketHandlers');
 const socketHandler = require('./utils/socketHandlers');
 
 //Controllers
@@ -119,4 +127,5 @@ app.post('/image',  upload.single('image'), (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
