@@ -16,14 +16,12 @@ module.exports = function(io, state) {
       next(new Error('Authentication error'));
     }
   }).on('connection', async (socket) => {
-    
-    socket.on('connect', () => {
-      console.log(socket.id, 'connected to server.');
-    });
+    console.log(socket.decoded.username, 'connected to server.');
 
     socket.emit('UpdateMessages', messages);
       
     socket.on('newMessage', (newMsg) => {
+      console.log(socket.decoded.username, 'sent msg id:', newMsg[0]._id);
       const message = {
         _id: newMsg[0]._id,
         text: newMsg[0].text,
@@ -40,6 +38,7 @@ module.exports = function(io, state) {
     });
 
     socket.on('shareLocation', (location) => {
+      console.log(socket.decoded.username, 'location received.');
       sharedLocations[socket.decoded.id] = {
         location: location,
         username: socket.decoded.username
@@ -50,7 +49,7 @@ module.exports = function(io, state) {
     });
 
     socket.on('disconnect', async () => {
-      console.log('User disconnected:', socket.id);
+      console.log('User disconnected:', socket.decoded.username);
       delete sharedLocations[socket.decoded.id];
     });
   });
