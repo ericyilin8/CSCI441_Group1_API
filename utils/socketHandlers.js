@@ -18,8 +18,10 @@ module.exports = function(io, state) {
   }).on('connection', async (socket) => {
     console.log(socket.decoded.username, 'connected to server.');
 
-    socket.emit('UpdateMessages', messages);
-      
+    socket.on('getMessages', () => {
+      socket.emit('UpdateMessages', messages);
+    })
+    
     socket.on('newMessage', (newMsg) => {
       console.log(socket.decoded.username, 'sent msg id:', newMsg[0]._id);
       const message = {
@@ -29,7 +31,7 @@ module.exports = function(io, state) {
         user: {
           _id: socket.decoded.id,
           name: socket.decoded.username,
-          avatar: 'https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg',
+          avatar: '',
         },
       };
 
