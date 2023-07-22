@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Group = require('../model/group');
 
-// GET /api/group - Get all groups
+// GET /api/group - Get all groups for a user
 router.get('/', async (req, res) => {
   try {
-    const groups = await Group.find();
+    const groups = await Group.find(req.jwt_payload.username);
     res.json(groups);
   } catch (err) {
     res.status(500).json({ error: err.message });
