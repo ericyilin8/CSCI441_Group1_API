@@ -18,8 +18,10 @@ module.exports = function(io, state) {
   }).on('connection', async (socket) => {
     console.log(socket.decoded.username, 'connected to server.');
 
-    socket.emit('UpdateMessages', messages);
-      
+    socket.on('getMessages', () => {
+      socket.emit('UpdateMessages', messages);
+    })
+    
     socket.on('newMessage', (newMsg) => {
       console.log(socket.decoded.username, 'sent msg id:', newMsg[0]._id);
       const message = {
