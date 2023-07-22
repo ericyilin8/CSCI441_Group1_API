@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
     //Find the user
-    const user = await User.findOne({username});
+    const user = await User.findOne({username}).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -56,13 +56,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// PUT /api/user/:id - Update a user by ID
-router.put('/:id', async (req, res) => {
+// PUT /api/user - Update a user
+router.put('/', async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const user = await User.findByIdAndUpdate(req.jwt_payload.id, req.body, { new: true }).lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    delete user.password;
     res.json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
