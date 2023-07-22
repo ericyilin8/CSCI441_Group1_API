@@ -87,7 +87,7 @@ app.post('/image',  upload.single('image'), (req, res) => {
 
   const destinationFolder = 'public';
   const imageName = Math.floor(Math.random()*100000) + '.jpg';
-  const destinationPath = path.join(__dirname, '..', destinationFolder, imageName);
+  const destinationPath = path.join(__dirname, destinationFolder, imageName);
 
   fs.writeFile(destinationPath, imageFile.buffer, (err) => {
     if (err) {
