@@ -68,7 +68,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // other middleware
-//app.use(verifyToken);
+app.use(verifyToken);
 
 // API Routes
 app.use('/api/user', userController);
@@ -100,9 +100,9 @@ app.post('/image',  upload.single('image'), (req, res) => {
         _id: Math.floor(Math.random()*100000),
         createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
         user: {
-          _id: Math.floor(Math.random()*100),
-          name: 'Lucy Jean',
-          avatar: 'https://cdn.stocksnap.io/img-thumbs/960w/camera-girl_WJL4RY6N6Z.jpg',
+          _id: req.jwt_payload.id,
+          name: req.jwt_payload.username, //temporary
+          avatar: '',
         },
         image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
         // Mark the message as sent, using one tick
