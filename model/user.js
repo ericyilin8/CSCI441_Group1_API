@@ -35,7 +35,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group',
   }],
-  currentGroup: String,
+  currentGroup:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+  },
 });
 
 const User = mongoose.model('User', userSchema);

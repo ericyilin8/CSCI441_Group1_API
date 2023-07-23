@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Group = require('../model/group');
+const User = require('../model/user');
 const jwt = require('jsonwebtoken');
 
 // GET /api/group - Get all groups for a user
 router.get('/', async (req, res) => {
   try {
-    const groups = await Group.find({username: req.jwt_payload.username});
-    res.json(groups);
+    const user = await User.findById(req.jwt_payload.id).lean();
+    res.json(user.groups);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -27,6 +28,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/group - Create a new group
+//Then add the group to the user's groups
 router.post('/', async (req, res) => {
   try {
     // Get user id from jwt payload
@@ -38,6 +40,26 @@ router.post('/', async (req, res) => {
     });
     
     await group.save();
+
+    const user = await User.findById(req.jwt_payload.id);
+    user.groups.push(group._id);
+    await user.save();
+
+    res.status(201).json(group);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// POST /api/group - add user to a group
+router.put('/addUser', async (req, res) => {
+  try {
+    // Get user from username
+    const user = await User.find({username: req.body.username});
+    //add group id to their groups
+    user.groups.push(req.body.groupId);
+    await user.save();
+
     res.status(201).json(group);
   } catch (err) {
     res.status(400).json({ error: err.message });
