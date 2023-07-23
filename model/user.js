@@ -41,6 +41,19 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// Define the pre hook
+userSchema.pre('save', function(next) {
+  const self = this; // Capture the reference to the current user document.
+
+  // Use a Set to store unique group IDs
+  const uniqueGroups = new Set(self.groups.map(group => group.toString()));
+
+  // Clear the groups array and repopulate it with unique group IDs
+  self.groups = Array.from(uniqueGroups).map(groupId => mongoose.Types.ObjectId(groupId));
+
+  next();
+});
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
