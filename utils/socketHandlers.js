@@ -50,6 +50,10 @@ module.exports = function(io, state) {
       console.log('Locations object: ', sharedLocations);
     });
 
+    socket.on('getLocations', () => {
+      io.emit('updateLocations', sharedLocations);
+    })
+
     socket.on('disconnect', async () => {
       console.log('User disconnected:', socket.decoded.username);
       delete sharedLocations[socket.decoded.id];
