@@ -9,15 +9,10 @@ const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.jwt_secret_key;
-const fs = require('fs');
-const multer = require('multer')
-// Configure multer
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 const routes_that_bypass_JWT = [ '/api/user/login' , '/api/user/register']
 
-function verifyToken(req, res, next) {
+module.exports.verifyToken = function (req, res, next) {
   const token = req.headers.authorization;
 
     // Skip JWT verification for routes like login and register
@@ -46,6 +41,10 @@ const state =
   messages: []
 }
 
+// Initialize messages from state
+let sharedLocations = state.sharedLocations;
+let messages = state.messages;
+
 //Utils
 const socketHandler = require('./utils/socketHandlers');
 
@@ -53,14 +52,10 @@ const socketHandler = require('./utils/socketHandlers');
 const userController = require('./controller/UserController');
 const messageController = require('./controller/MessageController');
 const groupController = require('./controller/GroupController');
+const imageController = require('./controller/ImageController');
 
 mongoose.connect(process.env.mongodb_uri)
   .then(() => console.log('MongoDB Connected!'));
-
-let sharedLocations = state.sharedLocations;
-let messages = state.messages;
-
-
 
 // built in middleware to handle urlencoded data
 app.use(express.urlencoded({ extended: false }));
@@ -68,54 +63,20 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // other middleware
-app.use(verifyToken);
+app.use(module.exports.verifyToken);
+app.use((req, res, next) => {
+  req.io = io;
+  req.messages = messages;
+  next();
+});
 
 // API Routes
 app.use('/api/user', userController);
 app.use('/api/message', messageController); 
-app.use('/api/group', groupController); 
+app.use('/api/group', groupController);
+app.use('/api/image', imageController);
 
 socketHandler(io, state);
-
-//upload image
-app.post('/image',  upload.single('image'), (req, res) => {
-  const imageFile = req.file;
-  if (!imageFile) {
-    res.status(400).json({ error: 'No file uploaded' });
-    return;
-  }
-
-  const destinationFolder = 'public';
-  const imageName = Math.floor(Math.random()*100000) + '.jpg';
-  const destinationPath = path.join(__dirname, destinationFolder, imageName);
-
-  fs.writeFile(destinationPath, imageFile.buffer, (err) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Failed to save image' });
-    } else {
-      res.json({ message: 'Image uploaded successfully' });
-
-      const imgMsg = {
-        _id: Math.floor(Math.random()*100000),
-        createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
-        user: {
-          _id: req.jwt_payload.id,
-          name: req.jwt_payload.username, //temporary
-          avatar: '',
-        },
-        image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
-        // Mark the message as sent, using one tick
-        sent: true,
-        // Mark the message as received, using two tick
-        pending: true
-        // Any additional custom parameters are passed through
-      }
-      messages.unshift(imgMsg)
-      io.emit('UpdateMessages', messages)
-    }
-  });
-});
 
 const PORT = process.env.PORT || 3000;
 
