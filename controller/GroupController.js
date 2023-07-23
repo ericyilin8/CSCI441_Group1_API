@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // GET /api/group - Get all groups for a user
 router.get('/', async (req, res) => {
   try {
-    const user = await User.findById(req.jwt_payload.id).lean();
+    const user = await User.findById(req.jwt_payload.id).populate('groups').lean();
     res.json(user.groups);
   } catch (err) {
     res.status(500).json({ error: err.message });
