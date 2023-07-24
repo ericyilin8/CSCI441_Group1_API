@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/group - Create a new group
+// POST /api/group - Create a new group, set creator as leader
 //Then add the group to the user's groups
 router.post('/', async (req, res) => {
   try {
@@ -55,12 +55,13 @@ router.post('/', async (req, res) => {
 router.put('/addUser', async (req, res) => {
   try {
     // Get user from username
-    const user = await User.find({username: req.body.username});
-    //add group id to their groups
-    user.groups.push(req.body.groupId);
-    await user.save();
+    const user = await User.findOneAndUpdate(
+      { username: req.body.username },
+      { $addToSet: { groups: req.body.groupId } }, // Using $addToSet to avoid duplicates
+      { new: true } // Return the updated document
+    );
 
-    res.status(201).json(group);
+    res.status(201).json(true);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
