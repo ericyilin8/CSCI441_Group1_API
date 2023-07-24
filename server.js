@@ -38,7 +38,7 @@ module.exports.verifyToken = function (req, res, next) {
 const state = 
 {
   sharedLocations: {},
-  messages: []
+  messages: {}
 }
 
 // Initialize messages from state

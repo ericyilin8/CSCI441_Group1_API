@@ -21,7 +21,6 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
       return router;
     }
 
-    const destinationFolder = 'public';
     const imageName = req.jwt_payload.username + '-' + Date.now() + '-' + uuid.v4() + '.jpg';
     const destinationPath = path.join(publicDirectory, imageName);
     console.log("Saving picture to:", destinationPath);
@@ -75,8 +74,15 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
             pending: true
             // Any additional custom parameters are passed through
           }
-          messages.unshift(imgMsg)
-          io.emit('UpdateMessages', messages)
+
+          if (Array.isArray(messages[req.body.groupId])) {
+            messages[req.body.groupId].unshift(imgMsg);
+          } else {
+            messages[req.body.groupId] = [imgMsg];
+          }
+
+          io.emit('UpdateMessages', messages[req.body.groupId]) 
+          console.log(messages)
         }
       });
     }

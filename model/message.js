@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+//This model isn't currently in use, and will need a groupId ref
 const messageSchema = new mongoose.Schema({
     //this id comes from react gifted chat
   _id: {
