@@ -18,6 +18,8 @@ module.exports = function(io, state) {
   }).on('connection', async (socket) => {
     console.log(socket.decoded.username, 'connected to server.');
 
+    socket.join(socket.handshake.query.groupId);
+
 // #region Message stuff
     socket.on('getMessages', (groupId) => {
       socket.emit('UpdateMessages', messages[groupId] || []);
@@ -42,8 +44,7 @@ module.exports = function(io, state) {
         messages[newMsg.groupId] = [message];
       }
 
-      io.emit('UpdateMessages', messages[newMsg.groupId]);
-      console.log(messages)
+      io.to(socket.handshake.query.groupId).emit('UpdateMessages', messages[newMsg.groupId]);
     });
 // #endregion
 
