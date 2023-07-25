@@ -18,15 +18,18 @@ module.exports = function(io, state) {
   }).on('connection', async (socket) => {
     console.log(socket.decoded.username, 'connected to server.');
 
-    socket.on('getMessages', () => {
-      socket.emit('UpdateMessages', messages);
+    socket.join(socket.handshake.query.groupId);
+
+// #region Message stuff
+    socket.on('getMessages', (groupId) => {
+      socket.emit('UpdateMessages', messages[groupId] || []);
     })
     
     socket.on('newMessage', (newMsg) => {
-      console.log(socket.decoded.username, 'sent msg id:', newMsg[0]._id);
+      console.log(socket.decoded.username, 'sent msg: ', newMsg);
       const message = {
-        _id: newMsg[0]._id,
-        text: newMsg[0].text,
+        _id: newMsg._id,
+        text: newMsg.text,
         createdAt: new Date(),
         user: {
           _id: socket.decoded.id,
@@ -35,9 +38,15 @@ module.exports = function(io, state) {
         },
       };
 
-      messages.unshift(message);
-      io.emit('UpdateMessages', messages);
+      if (Array.isArray(messages[newMsg.groupId])) {
+        messages[newMsg.groupId].unshift(message);
+      } else {
+        messages[newMsg.groupId] = [message];
+      }
+
+      io.to(socket.handshake.query.groupId).emit('UpdateMessages', messages[newMsg.groupId]);
     });
+// #endregion
 
     socket.on('shareLocation', (location) => {
       console.log(socket.decoded.username, 'location received.');
