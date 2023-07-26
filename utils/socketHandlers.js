@@ -7,13 +7,13 @@ module.exports = function(io, state) {
   io.use((socket, next) => {
     if (socket.handshake.query && socket.handshake.query.token){
       jwt.verify(socket.handshake.query.token, process.env.jwt_secret_key, function(err, decoded) {
-        if (err) return next(new Error('Authentication error'));
+        if (err) return next(new Error('Authentication error: Invalid token'));
         socket.decoded = decoded;
         next();
       });
     }
     else {
-      next(new Error('Authentication error'));
+      next(new Error('Authentication error: No token'));
     }
   }).on('connection', async (socket) => {
     console.log(socket.decoded.username, 'connected to server.');
@@ -27,6 +27,13 @@ module.exports = function(io, state) {
     
     socket.on('newMessage', (newMsg) => {
       console.log(socket.decoded.username, 'sent msg: ', newMsg);
+      
+      // Check for valid message data
+      if (newMsg === undefined || newMsg.groupId === undefined) {
+        console.error('Invalid message: ', newMsg);
+        return;
+      }
+
       const message = {
         _id: newMsg._id,
         text: newMsg.text,
