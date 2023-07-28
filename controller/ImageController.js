@@ -8,7 +8,6 @@ const verifyToken = require('../server').verifyToken;
 const path = require("path");
 const publicDirectory = path.resolve(__dirname, '../public');
 const sharp = require('sharp');
-const User = require('../model/user');
 
 router.post('/save', verifyToken, upload.single('image'), (req, res) => {
   try {
@@ -37,22 +36,6 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
             res.status(500).json({ error: 'Failed to save image' });
           } else {
             res.json({ message: 'Image uploaded successfully', path: process.env.DIRECTORY + '/public/' + imageName });
-
-            const avatarImg = {
-              _id: uuid.v4(),
-              createdAt: new Date(),
-              user: {
-                _id: req.jwt_payload.id,
-                name: req.jwt_payload.username, // temporary
-                avatar: '', // Add avatar uri to payload? Or not even needed?
-              },
-              image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
-              // Mark the message as sent, using one tick
-              sent: true,
-              // Mark the message as received, using two tick
-              pending: true
-              // Any additional custom parameters are passed through
-            }
           }
         });
     } else {
@@ -71,7 +54,7 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
               name: req.jwt_payload.name,
               avatar: '', // Add avatar uri to payload? Or not even needed?
             },
-            image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
+            image: process.env.DIRECTORY + '/public/' + imageName, //don't use path.join here
             // Mark the message as sent, using one tick
             sent: true,
             // Mark the message as received, using two tick
