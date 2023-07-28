@@ -60,7 +60,7 @@ mongoose.connect(process.env.mongodb_uri)
 // built in middleware to handle urlencoded data
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // other middleware
 app.use(module.exports.verifyToken);

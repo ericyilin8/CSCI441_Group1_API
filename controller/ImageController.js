@@ -8,6 +8,7 @@ const verifyToken = require('../server').verifyToken;
 const path = require("path");
 const publicDirectory = path.resolve(__dirname, '../public');
 const sharp = require('sharp');
+const User = require('../model/user');
 
 router.post('/save', verifyToken, upload.single('image'), (req, res) => {
   try {
@@ -35,7 +36,7 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
             console.error(err);
             res.status(500).json({ error: 'Failed to save image' });
           } else {
-            res.json({ message: 'Image uploaded successfully', path: process.env.DIRECTORY + '/' + imageName });
+            res.json({ message: 'Image uploaded successfully', path: process.env.DIRECTORY + '/public/' + imageName });
 
             const avatarImg = {
               _id: uuid.v4(),
@@ -45,7 +46,7 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
                 name: req.jwt_payload.username, // temporary
                 avatar: '', // Add avatar uri to payload? Or not even needed?
               },
-              image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
+              image: imageName, //don't use path.join here
               // Mark the message as sent, using one tick
               sent: true,
               // Mark the message as received, using two tick
@@ -93,6 +94,20 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
     console.error('Error uploading image:', error);
     res.status(500).send({ message: 'Error uploading image.' });
   }
+});
+
+router.get('/retrieve/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(publicDirectory, imageName);
+
+  fs.access(imagePath, fs.constants.F_OK, (err) => {
+    if(err) {
+      console.log(`${imageName} does not exist.`);
+      return res.status(404).json({message: `${imageName} does not exist.`});
+    }
+    // Image exists, send it
+    return res.sendFile(imagePath);
+  });
 });
 
 module.exports = router;
