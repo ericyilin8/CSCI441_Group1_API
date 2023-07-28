@@ -46,7 +46,7 @@ router.post('/save', verifyToken, upload.single('image'), (req, res) => {
                 name: req.jwt_payload.username, // temporary
                 avatar: '', // Add avatar uri to payload? Or not even needed?
               },
-              image: imageName, //don't use path.join here
+              image: process.env.DIRECTORY + '/' + imageName, //don't use path.join here
               // Mark the message as sent, using one tick
               sent: true,
               // Mark the message as received, using two tick
