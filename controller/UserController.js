@@ -7,7 +7,7 @@ const authService = require('../utils/authService');
 // POST /api/user - Create a new user
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, email, phoneNumber, firstName, lastName, avatar } = req.body;
+    const { username, password, email, phoneNumber, firstName, lastName } = req.body;
 
     console.log(`Received registration request for user: ${req.body.username}`);
     
@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await authService.hashPassword(password);
     
     // use hashed password when creating the user
-    const user = new User({ username, password: hashedPassword, email, phoneNumber, firstName, lastName, avatar });
+    const user = new User({ username, password: hashedPassword, email, phoneNumber, firstName, lastName });
     await user.save();
 
     res.status(201).json({ message: 'User created', user: { id: user._id, username: user.username }});
